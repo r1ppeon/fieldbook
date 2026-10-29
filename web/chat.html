@@ -21,6 +21,7 @@
   .bot p { margin:.5em 0; } .bot ol,.bot ul { margin:.4em 0; padding-left:1.4em; }
   .status { color:var(--dim); font-style:italic; font-size:14px; margin:6px 4px; }
   .error { color:var(--bad); }
+  .unverified { margin-top:10px; font-size:13px; color:var(--dim); border-top:1px dashed rgba(128,128,128,.3); padding-top:8px; }
   .sources { margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; }
   .sources a { font-size:13px; color:var(--accent); border:1px solid var(--accent); border-radius:20px;
                padding:3px 12px; text-decoration:none; }
@@ -103,6 +104,10 @@ async function ask(e) {
           answer += ev.text;
           bubble.innerHTML = md(answer);
           bubble.scrollIntoView({block:'end'});
+        } else if (ev.type === 'ungrounded') {
+          if (!bubble) bubble = el('msg bot','');
+          bubble.innerHTML = md(answer) +
+            '<div class="unverified">💭 Answered from the AI\'s built-in knowledge — no library document was used. Treat specifics with care.</div>';
         } else if (ev.type === 'sources' && ev.items.length) {
           if (!bubble) bubble = el('msg bot','');
           bubble.innerHTML = md(answer) + '<div class="sources">' +

@@ -32,8 +32,9 @@ Rules:
 - For factual, medical, survival, or how-to questions, ALWAYS use search_library first, and \
 read_article on the most promising result before answering. Ground your answer in what you read.
 - Answer plainly and practically. In emergencies, give clear numbered steps, most important first.
-- If the library has nothing relevant, say so, then answer from your general knowledge and note \
-that it wasn't verified against the library.
+- If the library has nothing relevant, say so, then answer from your general knowledge — and \
+begin that answer with "From general knowledge (not found in your library):". Never present an \
+unverified number, dose, or measurement as certain.
 - You may be helping someone in a real disaster: be calm, specific, and safety-conscious. For \
 serious medical situations, include when professional care is essential.
 - General conversation, reasoning, and problem-solving don't need the tools."""
@@ -244,6 +245,9 @@ def chat(messages, max_rounds=6):
         if not tool_calls:
             if sources:
                 yield {"type": "sources", "items": sources}
+            else:
+                # Nothing from the library backs this answer — let the UI say so.
+                yield {"type": "ungrounded"}
             yield {"type": "done"}
             return
 
