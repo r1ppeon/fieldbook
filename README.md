@@ -34,9 +34,9 @@ cd nomad-mac
 ./setup.sh
 ```
 
-Setup installs everything (Homebrew, Ollama, the Kiwix library server, and an
-AI model sized to your Mac's memory) and takes a few minutes plus the model
-download. Then:
+Setup installs everything into the `nomad-mac` folder itself (Ollama, the Kiwix
+library server, a private Python, and an AI model sized to your Mac's memory) —
+no admin password needed. It takes a few minutes plus the model download. Then:
 
 ```bash
 ./nomad library    # choose your knowledge packs (presets or à la carte)

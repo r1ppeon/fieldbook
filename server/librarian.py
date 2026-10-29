@@ -2,9 +2,18 @@
 
 Everything here talks only to localhost — Ollama (the model) and kiwix-serve
 (the knowledge library). Nothing requires the internet.
+
+Two kinds of knowledge packs are handled:
+- Indexed packs (Wikipedia, WikiMed, iFixit...): kiwix-serve full-text search.
+- Document packs (the zimgit survival collections): no full-text index; they
+  ship a database.js catalog of PDFs, which we match by title/description and
+  read with pypdf.
 """
+import ast
+import io
 import json
 import os
+import re
 import xml.etree.ElementTree as ET
 
 import httpx
@@ -34,7 +43,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "search_library",
-            "description": "Full-text search across every book in the offline library. Returns titles, snippets, and paths.",
+            "description": "Search the whole offline library (encyclopedia articles and survival/medical documents). Returns titles, snippets, and paths.",
             "parameters": {
                 "type": "object",
                 "properties": {"query": {"type": "string", "description": "Search terms, e.g. 'water purification boiling'"}},
@@ -46,19 +55,21 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "read_article",
-            "description": "Read the full text of one article found by search_library.",
+            "description": "Read the full text of one article or document found by search_library.",
             "parameters": {
                 "type": "object",
-                "properties": {"path": {"type": "string", "description": "The article 'path' exactly as returned by search_library"}},
+                "properties": {"path": {"type": "string", "description": "The 'path' exactly as returned by search_library"}},
                 "required": ["path"],
             },
         },
     },
 ]
 
+_toc_cache = {}
+
 
 def list_books():
-    """Books currently served by kiwix-serve: [{'name', 'title'}]."""
+    """Books served by kiwix-serve: [{'title', 'content_id', 'ftindex'}]."""
     try:
         r = httpx.get(f"{KIWIX}/catalog/v2/entries", params={"count": 200}, timeout=10)
         root = ET.fromstring(r.text)
@@ -66,49 +77,114 @@ def list_books():
         return []
     books = []
     for entry in root.iter(f"{ATOM}entry"):
-        name = next((el.text for el in entry.iter() if el.tag.endswith("}name") or el.tag == "name"), None)
-        title = entry.findtext(f"{ATOM}title")
-        if name:
-            books.append({"name": name, "title": title or name})
+        title = entry.findtext(f"{ATOM}title") or "?"
+        tags = entry.findtext(f"{ATOM}tags") or ""
+        content_id = None
+        for link in entry.iter(f"{ATOM}link"):
+            href = link.get("href") or ""
+            if link.get("type") == "text/html" and href.startswith("/content/"):
+                content_id = href.split("/content/", 1)[1].strip("/")
+        if content_id:
+            books.append({"title": title, "content_id": content_id,
+                          "ftindex": "_ftindex:no" not in tags})
     return books
 
 
-def search_library(query):
-    """Search every book; merge the best results."""
+def _fulltext_search(query):
+    """kiwix-serve full-text search across every indexed book."""
     results = []
-    for book in list_books():
-        try:
-            r = httpx.get(
-                f"{KIWIX}/search",
-                params={"books.name": book["name"], "pattern": query, "pageLength": 4},
-                timeout=15,
-            )
-            soup = BeautifulSoup(r.text, "html.parser")
-            for a in soup.select(".results a[href]"):
-                snippet_el = a.find_parent("li") or a.parent
-                snippet = " ".join(snippet_el.get_text(" ", strip=True).split())[:300] if snippet_el else ""
-                results.append({
-                    "title": a.get_text(strip=True),
-                    "path": a["href"],
-                    "book": book["title"],
-                    "snippet": snippet,
-                })
-        except Exception:
-            continue
+    try:
+        r = httpx.get(f"{KIWIX}/search", params={"pattern": query, "pageLength": 10}, timeout=15)
+        soup = BeautifulSoup(r.text, "html.parser")
+        for a in soup.select(".results a[href]"):
+            item = a.find_parent("li") or a.parent
+            snippet = " ".join(item.get_text(" ", strip=True).split())[:300] if item else ""
+            results.append({"title": a.get_text(strip=True), "path": a["href"], "snippet": snippet})
+    except Exception:
+        pass
+    return results
+
+
+def _pack_toc(book):
+    """The document list of a zimgit-style pack, from its database.js."""
+    if book["content_id"] in _toc_cache:
+        return _toc_cache[book["content_id"]]
+    docs = []
+    try:
+        r = httpx.get(f"{KIWIX}/content/{book['content_id']}/database.js", timeout=10)
+        if r.status_code == 200:
+            for raw in re.findall(r"\{[^{}]*\}", r.text):
+                try:
+                    e = ast.literal_eval(raw)
+                except (ValueError, SyntaxError):
+                    continue
+                if isinstance(e, dict) and e.get("ti") and e.get("fp"):
+                    docs.append({
+                        "title": e["ti"],
+                        "desc": f"{e.get('dsc', '')} ({e.get('aut', '')})".strip(),
+                        "path": f"/content/{book['content_id']}/files/{e['fp'][0]}",
+                        "book": book["title"],
+                    })
+    except Exception:
+        pass
+    _toc_cache[book["content_id"]] = docs
+    return docs
+
+
+def _toc_search(query, books):
+    """Match query words against document titles/descriptions in no-index packs."""
+    words = [w for w in re.findall(r"[a-z0-9]+", query.lower()) if len(w) > 2]
+    if not words:
+        return []
+    scored = []
+    for book in books:
+        for doc in _pack_toc(book):
+            hay = f"{doc['title']} {doc['desc']}".lower()
+            score = sum(hay.count(w) for w in words)
+            if score:
+                scored.append((score, doc))
+    scored.sort(key=lambda s: -s[0])
+    return [{"title": d["title"], "path": d["path"], "snippet": f"[{d['book']}] {d['desc']}"}
+            for _, d in scored[:8]]
+
+
+def search_library(query):
+    books = list_books()
+    results = _fulltext_search(query) + _toc_search(query, [b for b in books if not b["ftindex"]])
     if not results:
-        return {"results": [], "note": "No matches in the library for that query. Try different words."}
+        return {"results": [], "note": "No matches in the library. Try simpler or different words."}
     return {"results": results[:16]}
 
 
+def _pdf_text(data):
+    from pypdf import PdfReader
+    reader = PdfReader(io.BytesIO(data))
+    pages = [page.extract_text() or "" for page in reader.pages[:15]]
+    return " ".join(" ".join(pages).split())
+
+
 def read_article(path):
-    """Fetch one article from kiwix-serve and return readable text."""
+    """Fetch one article/document from kiwix-serve and return readable text."""
     if not path.startswith("/"):
         path = "/" + path
     try:
-        r = httpx.get(f"{KIWIX}{path}", timeout=20, follow_redirects=True)
+        r = httpx.get(f"{KIWIX}{path}", timeout=30, follow_redirects=True)
         r.raise_for_status()
     except Exception as e:
         return {"error": f"Could not read that article: {e}"}
+
+    if "pdf" in r.headers.get("content-type", "") or path.lower().endswith(".pdf"):
+        try:
+            text = _pdf_text(r.content)
+        except Exception as e:
+            return {"error": f"Couldn't extract PDF text ({e}). Give the user the link instead.",
+                    "title": os.path.basename(path), "path": path}
+        if len(text) < 200:
+            return {"title": os.path.basename(path), "path": path,
+                    "note": "This document is a scanned image without machine-readable text. "
+                            "Tell the user to open it via the source link.", "text": text}
+        return {"title": os.path.basename(path), "path": path, "text": text[:8000]}
+
     soup = BeautifulSoup(r.text, "html.parser")
     for tag in soup(["script", "style", "nav", "header", "footer"]):
         tag.decompose()
@@ -119,12 +195,11 @@ def read_article(path):
 
 def _run_tool(name, args, sources):
     if name == "search_library":
-        out = search_library(args.get("query", ""))
-        return out
+        return search_library(args.get("query", ""))
     if name == "read_article":
         out = read_article(args.get("path", ""))
-        if "title" in out:
-            sources.append({"title": out["title"], "href": f"{KIWIX}{out['path']}"})
+        if out.get("path") and not out.get("error"):
+            sources.append({"title": out.get("title", "source"), "href": f"{KIWIX}{out['path']}"})
         return out
     return {"error": f"unknown tool {name}"}
 

@@ -20,4 +20,12 @@ APP_PORT=8900     # the NOMAD dashboard + chat
 # Load personal overrides.
 [ -f "$NOMAD_DIR/config.local.sh" ] && source "$NOMAD_DIR/config.local.sh"
 
-export NOMAD_DIR LIBRARY_DIR NOMAD_MODEL KIWIX_PORT APP_PORT
+# Ollama binary: system install if present, otherwise the copy setup.sh
+# downloads into bin/.
+if command -v ollama >/dev/null 2>&1; then
+  OLLAMA_BIN="$(command -v ollama)"
+else
+  OLLAMA_BIN="$NOMAD_DIR/bin/ollama"
+fi
+
+export NOMAD_DIR LIBRARY_DIR NOMAD_MODEL KIWIX_PORT APP_PORT OLLAMA_BIN

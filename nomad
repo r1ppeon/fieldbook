@@ -17,7 +17,7 @@ zim_files() { ls "$LIBRARY_DIR"/zim/*.zim 2>/dev/null; }
 
 start_ollama() {
   if ! pgrep -x ollama >/dev/null; then
-    nohup ollama serve > run/logs/ollama.log 2>&1 &
+    nohup "$OLLAMA_BIN" serve > run/logs/ollama.log 2>&1 &
     echo $! > run/ollama.pid
     sleep 2
   fi
@@ -94,8 +94,8 @@ cmd_doctor() {
   FAILED=0
   [ -x bin/kiwix-serve ]; check "Kiwix server installed" $? "./setup.sh"
   [ -d .venv ]; check "Python environment" $? "./setup.sh"
-  command -v ollama >/dev/null; check "Ollama installed" $? "./setup.sh"
-  ollama list 2>/dev/null | grep -q "${NOMAD_MODEL%%:*}"; check "AI model downloaded ($NOMAD_MODEL)" $? "./setup.sh"
+  [ -x "$OLLAMA_BIN" ]; check "Ollama installed" $? "./setup.sh"
+  "$OLLAMA_BIN" list 2>/dev/null | grep -q "${NOMAD_MODEL%%:*}"; check "AI model downloaded ($NOMAD_MODEL)" $? "./setup.sh"
   [ -n "$(zim_files)" ]; check "Knowledge packs present" $? "./nomad library"
   up "$APP_PORT"; check "Services running" $? "./nomad start"
   if up "$APP_PORT"; then
