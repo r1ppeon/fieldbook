@@ -1,0 +1,11 @@
+# Downloaded content (huge) — never commit
+library/
+# Downloaded binaries
+bin/
+# Local machine settings (library path, model choice)
+config.local.sh
+# Runtime state
+run/
+.venv/
+__pycache__/
+.DS_Store
