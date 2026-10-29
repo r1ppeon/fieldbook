@@ -14,8 +14,13 @@ NOMAD turns your Mac into a self-contained survival resource:
   account, no internet.
 
 Everything runs locally and privately. After setup, NOMAD never needs the
-internet again. (Inspired by [Project NOMAD](https://github.com/Crosstalk-Solutions/project-nomad),
-which is Linux-only — this is a native Mac take on the same idea.)
+internet again.
+
+> **Credit:** This project is inspired by
+> [Project NOMAD](https://github.com/Crosstalk-Solutions/project-nomad) by
+> Crosstalk Solutions, a Linux-based offline knowledge server, and is named in
+> homage to it. NOMAD for Mac is an independent implementation adapted for
+> macOS and shares no code with the original.
 
 ## What you need
 
