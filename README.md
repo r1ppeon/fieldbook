@@ -29,9 +29,22 @@ internet again.
 - Disk space for the library you choose (the picker shows sizes before downloading).
 - Internet **for setup only**.
 
-## Install (3 steps)
+## Install — the easy way (one line)
 
-Open **Terminal** (press `⌘-Space`, type "Terminal") and paste:
+Open **Terminal** (press `⌘-Space`, type "Terminal", press Return) and paste
+this one line, then press Return:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/r1ppeon/fieldbook/main/get.sh)"
+```
+
+That downloads Fieldbook, sets everything up, and opens the dashboard in your
+browser. From there, click **Knowledge Packs** and hit one button to download
+your offline library. You never need Terminal again — day to day you just
+double-click **Fieldbook Start.command** in the `fieldbook` folder (it's in
+your home folder). Re-running the same line later updates Fieldbook.
+
+## Install — the git way
 
 ```bash
 git clone https://github.com/r1ppeon/fieldbook.git
