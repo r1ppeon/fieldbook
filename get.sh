@@ -13,9 +13,12 @@ curl -fsSL https://github.com/r1ppeon/fieldbook/archive/refs/heads/main.tar.gz \
 
 cd "$DEST"
 ./setup.sh
+echo
+echo "🔥 Now downloading the starter knowledge library (~6 GB)..."
+./fieldbook preset essentials
 ./fieldbook start
 
 echo
-echo "🔥 Fieldbook is running. Your browser just opened the dashboard."
-echo "   Click 'Knowledge Packs' there to download your offline library."
+echo "🔥 Fieldbook is ready and running — your browser just opened the dashboard."
+echo "   Try asking the Librarian a question. It all works with no internet now."
 echo "   Next time: double-click 'Fieldbook Start.command' in the fieldbook folder."

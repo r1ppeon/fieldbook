@@ -88,13 +88,10 @@
       <h2 class="pixel">⬇️ KNOWLEDGE PACKS</h2>
       <p>Download new content or free up space — with progress bars, no Terminal.</p>
     </a>
-    <a class="card" href="#" onclick="return false" style="cursor:default">
-      <h2 class="pixel">🔥 STAY READY</h2>
-      <p id="readiness">Checking the camp...</p>
-    </a>
   </div>
 
   <div class="status statusbox">
+    <div class="row" id="readiness" style="margin-bottom:10px">Checking the camp...</div>
     <div class="row"><span class="light" id="l-kiwix"></span>Library server</div>
     <div class="row"><span class="light" id="l-ollama"></span>AI engine <span id="model" style="color:var(--dim)"></span></div>
     <ul class="books" id="books"></ul>
@@ -109,8 +106,8 @@ async function refresh() {
     document.getElementById('model').textContent = '(' + s.model + ')';
     document.getElementById('librarylink').href = 'http://' + location.hostname + ':' + s.kiwix_port;
     document.getElementById('readiness').textContent = (s.kiwix && s.ollama && s.books.length)
-      ? 'All systems go. This Mac answers questions with zero connectivity.'
-      : 'Something needs attention — check the lights below.';
+      ? '🔥 Ready — this Mac answers questions with zero connectivity.'
+      : '⚠️ Not ready yet — see the lights below.';
     const ul = document.getElementById('books');
     ul.innerHTML = s.books.length
       ? s.books.map(b => '<li>' + b.title + '</li>').join('')

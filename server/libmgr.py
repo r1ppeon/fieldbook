@@ -78,6 +78,9 @@ def _worker(pack):
         url, size = hit
         dest = os.path.join(ZIM_DIR, os.path.basename(urllib.parse.urlparse(url).path))
         part = dest + ".part"
+        if os.path.exists(dest):
+            job["state"] = "done"
+            return
         job.update(total=size, part=part)
         rc = subprocess.call(
             ["curl", "-sL", "-C", "-", "--fail", "--retry", "5", "--retry-delay", "5", "-o", part, url]
@@ -85,7 +88,15 @@ def _worker(pack):
         if rc != 0:
             job.update(state="error", msg="Download interrupted — press Download again to resume.")
             return
-        os.replace(part, dest)
+        # Byte-count check before installing: catches corrupt/overlapping downloads.
+        if not os.path.exists(part) or os.path.getsize(part) != size:
+            if os.path.exists(part):
+                os.remove(part)
+            if not os.path.exists(dest):
+                job.update(state="error", msg="Download didn't verify — press Download to retry.")
+                return
+        else:
+            os.replace(part, dest)
         job["state"] = "done"
         subprocess.call([os.path.join(FIELDBOOK_DIR, "fieldbook"), "restart-kiwix"],
                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

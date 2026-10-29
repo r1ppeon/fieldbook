@@ -36,9 +36,12 @@ def load_catalog():
         return json.load(f)
 
 
-def library_dir():
+def library_dir(auto=False):
     """Where ZIM files live. First run (or missing drive) prompts for a location."""
     lib = os.environ.get("LIBRARY_DIR", os.path.join(FIELDBOOK_DIR, "library"))
+    if auto:
+        os.makedirs(os.path.join(lib, "zim"), exist_ok=True)
+        return lib
     local_cfg = os.path.join(FIELDBOOK_DIR, "config.local.sh")
     if not os.path.isdir(os.path.dirname(lib)) and lib.startswith("/Volumes/"):
         print(f"{RED}Your library drive ({os.path.dirname(lib)}) isn't plugged in.{RESET}")
@@ -101,6 +104,9 @@ def is_installed(pack, zims):
 def download(pack, url, size, lib):
     dest = os.path.join(lib, "zim", os.path.basename(urllib.parse.urlparse(url).path))
     part = dest + ".part"
+    if os.path.exists(dest):
+        print(f"{GREEN}Already installed: {os.path.basename(dest)}{RESET}")
+        return True
     print(f"\n{BOLD}Downloading {pack['title']}{RESET} ({human(size)})")
     print(f"{DIM}{url}{RESET}")
     # curl: resumable (-C -), follows mirror redirects, retries on flaky network
@@ -109,7 +115,23 @@ def download(pack, url, size, lib):
     if rc != 0:
         print(f"{RED}Download interrupted — run './fieldbook library' again to resume where it left off.{RESET}")
         return False
-    os.rename(part, dest)
+    # Verify the byte count before installing — catches corruption (e.g. two
+    # downloads of the same pack running at once and interleaving writes).
+    got = os.path.getsize(part) if os.path.exists(part) else -1
+    if got != size:
+        if os.path.exists(dest):  # another downloader finished it first
+            os.remove(part) if os.path.exists(part) else None
+            print(f"{GREEN}Already installed by another download: {os.path.basename(dest)}{RESET}")
+            return True
+        if os.path.exists(part):
+            os.remove(part)
+        print(f"{RED}{pack['title']}: download was the wrong size ({got} vs {size} bytes) — removed. Try again.{RESET}")
+        return False
+    try:
+        os.rename(part, dest)
+    except FileNotFoundError:
+        if not os.path.exists(dest):
+            raise
     print(f"{GREEN}Done: {os.path.basename(dest)}{RESET}")
     return True
 
@@ -172,9 +194,27 @@ def delete_menu(lib, zims):
 
 def main():
     cat = load_catalog()
-    lib = library_dir()
+    # Non-interactive: `library.py --preset essentials` downloads a whole
+    # preset with no questions asked (used by the one-line installer).
+    preset = None
+    if "--preset" in sys.argv:
+        preset = sys.argv[sys.argv.index("--preset") + 1]
+        if preset not in cat["presets"]:
+            print(f"Unknown preset '{preset}'. Options: {', '.join(cat['presets'])}")
+            sys.exit(1)
+    lib = library_dir(auto=bool(preset))
     zims = installed_zims(lib)
-    chosen = pick_packs(cat, zims)
+    if preset:
+        ids = set(cat["presets"][preset]["packs"])
+        chosen = [p for p in cat["packs"]
+                  if p["id"] in ids and not p.get("warn_huge") and not is_installed(p, zims)]
+        if not chosen:
+            print(f"{GREEN}The '{preset}' preset is already fully installed.{RESET}")
+            return
+        print(f"{BOLD}Downloading the '{preset}' knowledge preset "
+              f"({len(chosen)} packs)...{RESET}")
+    else:
+        chosen = pick_packs(cat, zims)
     if chosen is None:
         return
     if chosen == "delete":
@@ -214,7 +254,7 @@ def main():
     if total > free:
         print(f"{RED}Not enough free space at {lib}. Pick less, or move the library to a bigger drive.{RESET}")
         return
-    if input("Start downloads? [Y/n]: ").strip().lower() in ("n", "no"):
+    if not preset and input("Start downloads? [Y/n]: ").strip().lower() in ("n", "no"):
         return
     ok = sum(download(pack, url, size, lib) for pack, url, size in plan)
     print(f"\n{GREEN}{ok}/{len(plan)} packs installed.{RESET} Run {BOLD}./fieldbook start{RESET} to use them.")

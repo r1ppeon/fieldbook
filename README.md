@@ -38,11 +38,13 @@ this one line, then press Return:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/r1ppeon/fieldbook/main/get.sh)"
 ```
 
-That downloads Fieldbook, sets everything up, and opens the dashboard in your
-browser. From there, click **Knowledge Packs** and hit one button to download
-your offline library. You never need Terminal again — day to day you just
-double-click **Fieldbook Start.command** in the `fieldbook` folder (it's in
-your home folder). Re-running the same line later updates Fieldbook.
+That one command does everything: installs Fieldbook, downloads an AI sized to
+your Mac, downloads the starter survival library (~6 GB), and opens the
+dashboard in your browser, ready to use. You never need Terminal again — day
+to day you just double-click **Fieldbook Start.command** in the `fieldbook`
+folder (it's in your home folder), and you add more content from the
+**Knowledge Packs** page in your browser. Re-running the same line later
+updates Fieldbook without touching your library.
 
 ## Install — the git way
 
