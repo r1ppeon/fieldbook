@@ -1,6 +1,6 @@
 #!/bin/bash
-# NOMAD for Mac — control everything from one command.
-#   ./nomad start | stop | status | library | doctor | logs
+# Fieldbook — control everything from one command.
+#   ./fieldbook start | stop | status | library | doctor | logs
 set -e
 cd "$(dirname "$0")"
 source ./config.sh
@@ -30,7 +30,7 @@ start_kiwix() {
       "$LIBRARY_DIR"/zim/*.zim > run/logs/kiwix.log 2>&1 &
     echo $! > run/kiwix.pid
   else
-    echo "${YELLOW}No knowledge packs downloaded yet — run ./nomad library${RESET}"
+    echo "${YELLOW}No knowledge packs downloaded yet — run ./fieldbook library${RESET}"
   fi
 }
 
@@ -48,13 +48,13 @@ cmd_start() {
     echo "Plug it in and try again."
     exit 1
   fi
-  echo "Starting NOMAD..."
+  echo "Starting Fieldbook..."
   start_ollama
   start_kiwix
   start_app
   for _ in $(seq 1 20); do up "$APP_PORT" && break; sleep 0.5; done
   echo
-  echo "${BOLD}NOMAD is running.${RESET}"
+  echo "${BOLD}Fieldbook is running.${RESET}"
   echo "  Dashboard + AI chat:  http://localhost:$APP_PORT"
   echo "  Browse raw library:   http://localhost:$KIWIX_PORT"
   open "http://localhost:$APP_PORT" 2>/dev/null || true
@@ -72,10 +72,10 @@ check() {  # check <label> <ok?> <fix hint>
 }
 
 cmd_status() {
-  echo "${BOLD}NOMAD status${RESET}"
-  up "$APP_PORT";   check "Dashboard & chat (port $APP_PORT)" $? "./nomad start"
-  up "$KIWIX_PORT"; check "Library server (port $KIWIX_PORT)" $? "./nomad start (and download packs)"
-  curl -sf -o /dev/null --max-time 2 "http://127.0.0.1:11434/"; check "AI engine (Ollama)" $? "./nomad start"
+  echo "${BOLD}Fieldbook status${RESET}"
+  up "$APP_PORT";   check "Dashboard & chat (port $APP_PORT)" $? "./fieldbook start"
+  up "$KIWIX_PORT"; check "Library server (port $KIWIX_PORT)" $? "./fieldbook start (and download packs)"
+  curl -sf -o /dev/null --max-time 2 "http://127.0.0.1:11434/"; check "AI engine (Ollama)" $? "./fieldbook start"
   echo
   echo "  Library: $LIBRARY_DIR"
   local n=0 sz=""
@@ -84,20 +84,20 @@ cmd_status() {
     sz=$(du -shc "$LIBRARY_DIR"/zim/*.zim 2>/dev/null | tail -1 | awk '{print $1}')
     echo "  Packs:   $n installed ($sz)"
   else
-    echo "  Packs:   none yet — run ./nomad library"
+    echo "  Packs:   none yet — run ./fieldbook library"
   fi
-  echo "  AI model: $NOMAD_MODEL"
+  echo "  AI model: $FIELDBOOK_MODEL"
 }
 
 cmd_doctor() {
-  echo "${BOLD}NOMAD doctor — can this Mac answer questions with no internet?${RESET}"
+  echo "${BOLD}Fieldbook doctor — can this Mac answer questions with no internet?${RESET}"
   FAILED=0
   [ -x bin/kiwix-serve ]; check "Kiwix server installed" $? "./setup.sh"
   [ -d .venv ]; check "Python environment" $? "./setup.sh"
   [ -x "$OLLAMA_BIN" ]; check "Ollama installed" $? "./setup.sh"
-  "$OLLAMA_BIN" list 2>/dev/null | grep -q "${NOMAD_MODEL%%:*}"; check "AI model downloaded ($NOMAD_MODEL)" $? "./setup.sh"
-  [ -n "$(zim_files)" ]; check "Knowledge packs present" $? "./nomad library"
-  up "$APP_PORT"; check "Services running" $? "./nomad start"
+  "$OLLAMA_BIN" list 2>/dev/null | grep -q "${FIELDBOOK_MODEL%%:*}"; check "AI model downloaded ($FIELDBOOK_MODEL)" $? "./setup.sh"
+  [ -n "$(zim_files)" ]; check "Knowledge packs present" $? "./fieldbook library"
+  up "$APP_PORT"; check "Services running" $? "./fieldbook start"
   if up "$APP_PORT"; then
     echo "  ... asking the AI a test question (may take ~30s)"
     ANSWER=$(curl -sf --max-time 120 -X POST "http://127.0.0.1:$APP_PORT/api/chat" \
@@ -117,9 +117,9 @@ case "${1:-}" in
   start)   cmd_start ;;
   stop)    cmd_stop ;;
   status)  cmd_status ;;
-  library) NOMAD_DIR="$NOMAD_DIR" LIBRARY_DIR="$LIBRARY_DIR" python3 scripts/library.py; start_kiwix 2>/dev/null || true ;;
+  library) FIELDBOOK_DIR="$FIELDBOOK_DIR" LIBRARY_DIR="$LIBRARY_DIR" python3 scripts/library.py; start_kiwix 2>/dev/null || true ;;
   restart-kiwix) start_kiwix ;;
   doctor)  cmd_doctor ;;
   logs)    tail -n 40 run/logs/*.log ;;
-  *) echo "Usage: ./nomad {start|stop|status|library|doctor|logs}"; exit 1 ;;
+  *) echo "Usage: ./fieldbook {start|stop|status|library|doctor|logs}"; exit 1 ;;
 esac

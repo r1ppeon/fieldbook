@@ -1,4 +1,4 @@
-"""NOMAD dashboard + chat server. Localhost only; works fully offline."""
+"""Fieldbook dashboard + chat server. Localhost only; works fully offline."""
 import json
 import os
 
@@ -12,7 +12,7 @@ from . import librarian, libmgr
 KIWIX_PORT = os.environ.get("KIWIX_PORT", "8090")
 WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "web")
 
-app = FastAPI(title="NOMAD for Mac")
+app = FastAPI(title="Fieldbook")
 
 
 @app.get("/api/status")

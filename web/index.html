@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NOMAD</title>
+<title>Fieldbook</title>
 <style>
   :root { --bg:#10141a; --card:#1a212b; --text:#e8edf4; --dim:#8b97a8; --accent:#e8a33d; --ok:#4cc38a; --bad:#e5534b; }
   @media (prefers-color-scheme: light) { :root { --bg:#f4f1ea; --card:#ffffff; --text:#1d2733; --dim:#5b6878; } }
@@ -29,7 +29,7 @@
 </head>
 <body>
 <div class="wrap">
-  <h1><span class="flag">⬢</span> NOMAD</h1>
+  <h1><span class="flag">⬢</span> Fieldbook</h1>
   <p class="tag">Your offline knowledge base &amp; AI — no internet required.</p>
 
   <div class="grid">
@@ -64,7 +64,7 @@ async function refresh() {
     const ul = document.getElementById('books');
     ul.innerHTML = s.books.length
       ? s.books.map(b => '<li>' + b.title + '</li>').join('')
-      : '<li>No knowledge packs yet — run <code>./nomad library</code> in Terminal.</li>';
+      : '<li>No knowledge packs yet — run <code>./fieldbook library</code> in Terminal.</li>';
   } catch (e) { /* app starting up */ }
 }
 refresh(); setInterval(refresh, 5000);

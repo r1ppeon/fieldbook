@@ -15,8 +15,8 @@ import xml.etree.ElementTree as ET
 
 import httpx
 
-NOMAD_DIR = os.environ.get("NOMAD_DIR") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LIBRARY_DIR = os.environ.get("LIBRARY_DIR") or os.path.join(NOMAD_DIR, "library")
+FIELDBOOK_DIR = os.environ.get("FIELDBOOK_DIR") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LIBRARY_DIR = os.environ.get("LIBRARY_DIR") or os.path.join(FIELDBOOK_DIR, "library")
 ZIM_DIR = os.path.join(LIBRARY_DIR, "zim")
 CATALOG_API = "https://library.kiwix.org/catalog/v2/entries"
 ATOM = "{http://www.w3.org/2005/Atom}"
@@ -27,7 +27,7 @@ _jobs = {}  # pack id -> {"state": queued|downloading|done|error, "part", "total
 
 
 def catalog():
-    with open(os.path.join(NOMAD_DIR, "catalog.json")) as f:
+    with open(os.path.join(FIELDBOOK_DIR, "catalog.json")) as f:
         return json.load(f)
 
 
@@ -87,7 +87,7 @@ def _worker(pack):
             return
         os.replace(part, dest)
         job["state"] = "done"
-        subprocess.call([os.path.join(NOMAD_DIR, "nomad"), "restart-kiwix"],
+        subprocess.call([os.path.join(FIELDBOOK_DIR, "fieldbook"), "restart-kiwix"],
                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
@@ -111,7 +111,7 @@ def delete(filename):
     if filename not in files:
         return {"error": "no such pack file"}
     os.remove(os.path.join(ZIM_DIR, filename))
-    subprocess.call([os.path.join(NOMAD_DIR, "nomad"), "restart-kiwix"],
+    subprocess.call([os.path.join(FIELDBOOK_DIR, "fieldbook"), "restart-kiwix"],
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return {"ok": True}
 
@@ -129,7 +129,7 @@ def status():
     for p in cat["packs"]:
         packs.append({**p, "installed": _is_installed(p, files)})
     try:
-        free = shutil.disk_usage(LIBRARY_DIR if os.path.isdir(LIBRARY_DIR) else NOMAD_DIR).free
+        free = shutil.disk_usage(LIBRARY_DIR if os.path.isdir(LIBRARY_DIR) else FIELDBOOK_DIR).free
     except OSError:
         free = 0
     return {"packs": packs, "presets": cat["presets"], "installed": files,

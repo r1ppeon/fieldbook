@@ -1,5 +1,5 @@
 #!/bin/bash
-# NOMAD for Mac — one-command setup. No admin password, no Homebrew needed.
+# Fieldbook — one-command setup. No admin password, no Homebrew needed.
 # Installs into this folder: the Kiwix library server, Ollama (local AI),
 # a private Python environment, and an AI model sized to this Mac's memory.
 # Internet is required for setup only.
@@ -71,17 +71,17 @@ elif [ "$MEM_GB" -lt 40 ]; then MODEL="qwen3:14b"
 else                            MODEL="qwen3:30b"
 fi
 echo "This Mac has ${MEM_GB} GB of memory -> using ${BOLD}${MODEL}${RESET}"
-grep -q '^NOMAD_MODEL=' config.local.sh 2>/dev/null || echo "NOMAD_MODEL=\"$MODEL\"" >> config.local.sh
+grep -q '^FIELDBOOK_MODEL=' config.local.sh 2>/dev/null || echo "FIELDBOOK_MODEL=\"$MODEL\"" >> config.local.sh
 source ./config.sh   # pick up any existing override
 
-step "Downloading the AI model (${NOMAD_MODEL}) — several GB, one time only"
+step "Downloading the AI model (${FIELDBOOK_MODEL}) — several GB, one time only"
 if ! pgrep -x ollama >/dev/null; then
   nohup "$OLLAMA_BIN" serve > run/logs/ollama.log 2>&1 &
   sleep 3
 fi
-"$OLLAMA_BIN" pull "$NOMAD_MODEL"
+"$OLLAMA_BIN" pull "$FIELDBOOK_MODEL"
 
 echo
 echo "${BOLD}Setup complete!${RESET} Next steps:"
-echo "  1. ./nomad library   — choose and download your knowledge packs"
-echo "  2. ./nomad start     — start NOMAD and open the dashboard"
+echo "  1. ./fieldbook library   — choose and download your knowledge packs"
+echo "  2. ./fieldbook start     — start Fieldbook and open the dashboard"

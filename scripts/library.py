@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NOMAD library manager: pick, download, and remove offline knowledge packs.
+"""Fieldbook library manager: pick, download, and remove offline knowledge packs.
 
 Uses only the Python standard library so it works before setup finishes.
 Pack metadata (exact download URL + current size) is resolved live from the
@@ -15,7 +15,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
-NOMAD_DIR = os.environ.get("NOMAD_DIR") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FIELDBOOK_DIR = os.environ.get("FIELDBOOK_DIR") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CATALOG_API = "https://library.kiwix.org/catalog/v2/entries"
 ATOM = "{http://www.w3.org/2005/Atom}"
 
@@ -32,14 +32,14 @@ def human(nbytes):
 
 
 def load_catalog():
-    with open(os.path.join(NOMAD_DIR, "catalog.json")) as f:
+    with open(os.path.join(FIELDBOOK_DIR, "catalog.json")) as f:
         return json.load(f)
 
 
 def library_dir():
     """Where ZIM files live. First run (or missing drive) prompts for a location."""
-    lib = os.environ.get("LIBRARY_DIR", os.path.join(NOMAD_DIR, "library"))
-    local_cfg = os.path.join(NOMAD_DIR, "config.local.sh")
+    lib = os.environ.get("LIBRARY_DIR", os.path.join(FIELDBOOK_DIR, "library"))
+    local_cfg = os.path.join(FIELDBOOK_DIR, "config.local.sh")
     if not os.path.isdir(os.path.dirname(lib)) and lib.startswith("/Volumes/"):
         print(f"{RED}Your library drive ({os.path.dirname(lib)}) isn't plugged in.{RESET}")
         print("Plug it in and run this again, or choose a new location below.\n")
@@ -48,16 +48,16 @@ def library_dir():
         return lib
 
     print(f"{BOLD}Where should your knowledge library live?{RESET}")
-    print("  1. On this Mac  (" + os.path.join(NOMAD_DIR, "library") + ")")
+    print("  1. On this Mac  (" + os.path.join(FIELDBOOK_DIR, "library") + ")")
     vols = [v for v in sorted(os.listdir("/Volumes")) if v != "Macintosh HD"]
     for i, v in enumerate(vols, start=2):
         free = human(shutil.disk_usage(f"/Volumes/{v}").free)
         print(f"  {i}. External drive: /Volumes/{v}  ({free} free)")
     choice = input("Choose [1]: ").strip() or "1"
     if choice == "1" or not choice.isdigit() or int(choice) - 2 >= len(vols):
-        lib = os.path.join(NOMAD_DIR, "library")
+        lib = os.path.join(FIELDBOOK_DIR, "library")
     else:
-        lib = f"/Volumes/{vols[int(choice) - 2]}/nomad-library"
+        lib = f"/Volumes/{vols[int(choice) - 2]}/fieldbook-library"
         with open(local_cfg, "a") as f:
             f.write(f'LIBRARY_DIR="{lib}"\n')
         print(f"Saved: library will live at {lib}")
@@ -107,7 +107,7 @@ def download(pack, url, size, lib):
     rc = subprocess.call(["curl", "-L", "-C", "-", "--fail", "--retry", "5",
                           "--retry-delay", "5", "-o", part, url])
     if rc != 0:
-        print(f"{RED}Download interrupted — run './nomad library' again to resume where it left off.{RESET}")
+        print(f"{RED}Download interrupted — run './fieldbook library' again to resume where it left off.{RESET}")
         return False
     os.rename(part, dest)
     print(f"{GREEN}Done: {os.path.basename(dest)}{RESET}")
@@ -116,7 +116,7 @@ def download(pack, url, size, lib):
 
 def pick_packs(cat, zims):
     packs = cat["packs"]
-    print(f"\n{BOLD}=== NOMAD Knowledge Library ==={RESET}\n")
+    print(f"\n{BOLD}=== Fieldbook Knowledge Library ==={RESET}\n")
     print(f"{BOLD}Quick presets:{RESET}")
     preset_keys = list(cat["presets"])
     for i, key in enumerate(preset_keys, 1):
@@ -217,7 +217,7 @@ def main():
     if input("Start downloads? [Y/n]: ").strip().lower() in ("n", "no"):
         return
     ok = sum(download(pack, url, size, lib) for pack, url, size in plan)
-    print(f"\n{GREEN}{ok}/{len(plan)} packs installed.{RESET} Run {BOLD}./nomad start{RESET} to use them.")
+    print(f"\n{GREEN}{ok}/{len(plan)} packs installed.{RESET} Run {BOLD}./fieldbook start{RESET} to use them.")
 
 
 if __name__ == "__main__":

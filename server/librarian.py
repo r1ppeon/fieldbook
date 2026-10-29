@@ -1,4 +1,4 @@
-"""The NOMAD librarian: a local LLM that can search and read the offline library.
+"""The Fieldbook librarian: a local LLM that can search and read the offline library.
 
 Everything here talks only to localhost — Ollama (the model) and kiwix-serve
 (the knowledge library). Nothing requires the internet.
@@ -21,10 +21,10 @@ import ollama
 from bs4 import BeautifulSoup
 
 KIWIX = f"http://127.0.0.1:{os.environ.get('KIWIX_PORT', '8090')}"
-MODEL = os.environ.get("NOMAD_MODEL", "qwen3:8b")
+MODEL = os.environ.get("FIELDBOOK_MODEL", "qwen3:8b")
 ATOM = "{http://www.w3.org/2005/Atom}"
 
-SYSTEM_PROMPT = """You are the NOMAD librarian, an offline assistant running on the user's own \
+SYSTEM_PROMPT = """You are the Fieldbook librarian, an offline assistant running on the user's own \
 Mac with no internet. You have access to their offline knowledge library (Wikipedia, medical \
 references, survival guides, repair manuals) through two tools.
 

@@ -1,9 +1,9 @@
-# ⬢ NOMAD for Mac
+# ⬢ Fieldbook
 
 **An offline knowledge base + local AI for when the internet is gone.**
 
 When the power's out, the cell towers are down, or you're just somewhere remote,
-NOMAD turns your Mac into a self-contained survival resource:
+Fieldbook turns your Mac into a self-contained survival resource:
 
 - 📚 **Offline library** — Wikipedia, medical encyclopedias, survival guides,
   water purification, repair manuals, and more. You pick what to download, so
@@ -13,13 +13,13 @@ NOMAD turns your Mac into a self-contained survival resource:
   sources, and help with general reasoning and problem-solving. No cloud, no
   account, no internet.
 
-Everything runs locally and privately. After setup, NOMAD never needs the
+Everything runs locally and privately. After setup, Fieldbook never needs the
 internet again.
 
 > **Credit:** This project is inspired by
 > [Project NOMAD](https://github.com/Crosstalk-Solutions/project-nomad) by
 > Crosstalk Solutions, a Linux-based offline knowledge server, and is named in
-> homage to it. NOMAD for Mac is an independent implementation adapted for
+> homage to it. Fieldbook is an independent implementation adapted for
 > macOS and shares no code with the original.
 
 ## What you need
@@ -34,28 +34,28 @@ internet again.
 Open **Terminal** (press `⌘-Space`, type "Terminal") and paste:
 
 ```bash
-git clone https://github.com/r1ppeon/nomad-mac.git
-cd nomad-mac
+git clone https://github.com/r1ppeon/fieldbook.git
+cd fieldbook
 ./setup.sh
 ```
 
-Setup installs everything into the `nomad-mac` folder itself (Ollama, the Kiwix
+Setup installs everything into the `fieldbook` folder itself (Ollama, the Kiwix
 library server, a private Python, and an AI model sized to your Mac's memory) —
 no admin password needed. It takes a few minutes plus the model download. Then:
 
 ```bash
-./nomad library    # choose your knowledge packs (presets or à la carte)
-./nomad start      # opens the dashboard in your browser
+./fieldbook library    # choose your knowledge packs (presets or à la carte)
+./fieldbook start      # opens the dashboard in your browser
 ```
 
 That's it. The dashboard lives at `http://localhost:8900`.
 
 ## Day-to-day use (no Terminal needed)
 
-- **Start:** double-click **`NOMAD Start.command`** in the `nomad-mac` folder
+- **Start:** double-click **`Fieldbook Start.command`** in the `fieldbook` folder
   (drag it to your Dock to make it one click). Your browser opens the dashboard.
-- **Stop:** double-click **`NOMAD Stop.command`**. Closing windows doesn't stop
-  it — NOMAD keeps running in the background until you stop it or restart the Mac.
+- **Stop:** double-click **`Fieldbook Stop.command`**. Closing windows doesn't stop
+  it — Fieldbook keeps running in the background until you stop it or restart the Mac.
 - **Get more content / free up space:** click **Manage Knowledge Packs** on the
   dashboard — download presets or individual packs with progress bars, and
   delete packs you no longer want. New content appears in the library and the
@@ -65,24 +65,24 @@ That's it. The dashboard lives at `http://localhost:8900`.
 
 | Command | What it does |
 |---|---|
-| `./nomad start` | Start everything and open the dashboard |
-| `./nomad stop` | Stop everything |
-| `./nomad library` | Add or remove knowledge packs |
-| `./nomad status` | Quick health check |
-| `./nomad doctor` | Full offline-readiness check (run this before you need it!) |
-| `./nomad logs` | Show recent logs if something's wrong |
+| `./fieldbook start` | Start everything and open the dashboard |
+| `./fieldbook stop` | Stop everything |
+| `./fieldbook library` | Add or remove knowledge packs |
+| `./fieldbook status` | Quick health check |
+| `./fieldbook doctor` | Full offline-readiness check (run this before you need it!) |
+| `./fieldbook logs` | Show recent logs if something's wrong |
 
-**💡 Do a drill:** after setup, turn Wi-Fi off and run `./nomad doctor`. If it
+**💡 Do a drill:** after setup, turn Wi-Fi off and run `./fieldbook doctor`. If it
 passes, your Mac can answer questions with zero connectivity — that's the whole
-point. A MacBook on battery + NOMAD = a working reference library during an outage.
+point. A MacBook on battery + Fieldbook = a working reference library during an outage.
 
 ## Keeping the library on an external drive
 
 The library can live on an external SSD instead of your Mac — handy for big
-libraries, and you can hand the drive to a friend. Run `./nomad library` and
+libraries, and you can hand the drive to a friend. Run `./fieldbook library` and
 pick your drive when asked where the library should live. To share: your friend
 installs this repo (steps above), plugs in a copy of your drive, and picks it
-in `./nomad library` — no re-downloading needed.
+in `./fieldbook library` — no re-downloading needed.
 
 ## What's in the library packs?
 
@@ -105,7 +105,7 @@ Three local services, all bound to your machine only:
 |---|---|
 | `kiwix-serve` (port 8090) | Serves the knowledge packs (ZIM files) with full-text search |
 | Ollama (port 11434) | Runs the AI model on Apple Silicon's GPU |
-| NOMAD app (port 8900) | The dashboard + chat. When you ask a question, the AI uses tools to search the library and read articles, then answers with source links. |
+| Fieldbook app (port 8900) | The dashboard + chat. When you ask a question, the AI uses tools to search the library and read articles, then answers with source links. |
 
 ## FAQ
 
@@ -117,5 +117,5 @@ cites, and it's genuinely useful for reasoning and everyday questions.
 **Does anything leave my Mac?** No. Everything binds to `localhost`. Nothing
 is sent anywhere, ever.
 
-**Medical disclaimer:** NOMAD is an emergency reference, not a doctor. Get
+**Medical disclaimer:** Fieldbook is an emergency reference, not a doctor. Get
 professional care whenever it's available.
