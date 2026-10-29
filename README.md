@@ -45,7 +45,18 @@ no admin password needed. It takes a few minutes plus the model download. Then:
 
 That's it. The dashboard lives at `http://localhost:8900`.
 
-## Using it
+## Day-to-day use (no Terminal needed)
+
+- **Start:** double-click **`NOMAD Start.command`** in the `nomad-mac` folder
+  (drag it to your Dock to make it one click). Your browser opens the dashboard.
+- **Stop:** double-click **`NOMAD Stop.command`**. Closing windows doesn't stop
+  it — NOMAD keeps running in the background until you stop it or restart the Mac.
+- **Get more content / free up space:** click **Manage Knowledge Packs** on the
+  dashboard — download presets or individual packs with progress bars, and
+  delete packs you no longer want. New content appears in the library and the
+  AI's search immediately.
+
+## Terminal commands (equivalent, for those who like them)
 
 | Command | What it does |
 |---|---|

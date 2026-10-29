@@ -118,6 +118,7 @@ case "${1:-}" in
   stop)    cmd_stop ;;
   status)  cmd_status ;;
   library) NOMAD_DIR="$NOMAD_DIR" LIBRARY_DIR="$LIBRARY_DIR" python3 scripts/library.py; start_kiwix 2>/dev/null || true ;;
+  restart-kiwix) start_kiwix ;;
   doctor)  cmd_doctor ;;
   logs)    tail -n 40 run/logs/*.log ;;
   *) echo "Usage: ./nomad {start|stop|status|library|doctor|logs}"; exit 1 ;;

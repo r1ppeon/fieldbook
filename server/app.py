@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import librarian
+from . import librarian, libmgr
 
 KIWIX_PORT = os.environ.get("KIWIX_PORT", "8090")
 WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "web")
@@ -31,6 +31,25 @@ def status():
         "kiwix_port": KIWIX_PORT,
         "books": books,
     }
+
+
+@app.get("/api/library")
+def library_status():
+    return libmgr.status()
+
+
+@app.post("/api/library/download")
+async def library_download(request: Request):
+    body = await request.json()
+    ids = body.get("ids") or [body.get("id")]
+    results = [libmgr.start_download(pid) for pid in ids if pid]
+    return {"ok": all(r.get("ok") for r in results), "results": results}
+
+
+@app.post("/api/library/delete")
+async def library_delete(request: Request):
+    body = await request.json()
+    return libmgr.delete(body.get("file", ""))
 
 
 @app.post("/api/chat")
