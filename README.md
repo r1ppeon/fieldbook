@@ -29,7 +29,7 @@ which is Linux-only — this is a native Mac take on the same idea.)
 Open **Terminal** (press `⌘-Space`, type "Terminal") and paste:
 
 ```bash
-git clone https://github.com/YOURNAME/nomad-mac.git
+git clone https://github.com/r1ppeon/nomad-mac.git
 cd nomad-mac
 ./setup.sh
 ```
