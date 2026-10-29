@@ -4,50 +4,97 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fieldbook</title>
+<link rel="stylesheet" href="theme.css">
 <style>
-  :root { --bg:#10141a; --card:#1a212b; --text:#e8edf4; --dim:#8b97a8; --accent:#e8a33d; --ok:#4cc38a; --bad:#e5534b; }
-  @media (prefers-color-scheme: light) { :root { --bg:#f4f1ea; --card:#ffffff; --text:#1d2733; --dim:#5b6878; } }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 -apple-system, "SF Pro Text", Helvetica, sans-serif; }
-  .wrap { max-width:820px; margin:0 auto; padding:40px 16px; }
-  h1 { font-size:34px; margin:0; letter-spacing:.5px; }
-  h1 .flag { color:var(--accent); }
-  .tag { color:var(--dim); margin:4px 0 28px; }
+  body { margin:0; font:16px/1.55 -apple-system, "SF Pro Text", Helvetica, sans-serif; }
+  .wrap { max-width:820px; margin:0 auto; padding:44px 16px; }
+  .hero { display:flex; align-items:center; gap:22px; margin-bottom:34px; }
+  h1 { font-size:26px; margin:0 0 10px; color:var(--accent-hi); }
+  .tag { color:var(--dim); margin:0; font-size:15px; }
   .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  @media (max-width:640px){ .grid { grid-template-columns:1fr; } }
-  a.card { display:block; background:var(--card); border-radius:14px; padding:22px; text-decoration:none; color:var(--text); border:1px solid rgba(128,128,128,.15); }
-  a.card:hover { border-color:var(--accent); }
-  .card h2 { margin:0 0 6px; font-size:20px; }
+  @media (max-width:640px){ .grid { grid-template-columns:1fr; } .hero{flex-direction:column; text-align:center;} }
+  a.card { display:block; padding:22px; text-decoration:none; color:var(--text); }
+  a.card:hover { border-color:var(--accent) !important; }
+  .card h2 { margin:0 0 8px; font-size:13px; color:var(--accent); }
   .card p { margin:0; color:var(--dim); font-size:14px; }
-  .status { background:var(--card); border-radius:14px; padding:18px 22px; margin-top:16px; border:1px solid rgba(128,128,128,.15); }
-  .light { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; background:var(--bad); }
-  .light.on { background:var(--ok); }
+  .status { padding:18px 22px; margin-top:16px; }
+  .light { display:inline-block; width:10px; height:10px; margin-right:9px; background:var(--bad); box-shadow:0 0 8px currentColor; }
+  .light.on { background:var(--ok); color:var(--ok); }
+  .light { color:var(--bad); }
   .row { margin:6px 0; font-size:15px; }
-  .books { margin-top:10px; color:var(--dim); font-size:14px; }
+  .books { margin:10px 0 0; color:var(--dim); font-size:14px; }
   .books li { margin:2px 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1><span class="flag">⬢</span> Fieldbook</h1>
-  <p class="tag">Your offline knowledge base &amp; AI — no internet required.</p>
+  <div class="hero">
+    <span class="campfire" style="width:96px;height:96px">
+      <span class="glow"></span>
+      <svg viewBox="0 0 16 16" width="96" height="96" aria-hidden="true">
+        <g class="f1">
+          <rect x="8" y="2" width="1" height="1" fill="#ff9b45"/><rect x="6" y="4" width="1" height="1" fill="#d9502a"/>
+          <rect x="7" y="3" width="2" height="1" fill="#d9502a"/><rect x="6" y="5" width="4" height="1" fill="#d9502a"/>
+          <rect x="5" y="6" width="5" height="1" fill="#d9502a"/><rect x="4" y="7" width="8" height="1" fill="#d9502a"/>
+          <rect x="4" y="8" width="8" height="1" fill="#d9502a"/><rect x="3" y="9" width="10" height="1" fill="#d9502a"/>
+          <rect x="3" y="10" width="10" height="1" fill="#d9502a"/><rect x="4" y="11" width="8" height="1" fill="#d9502a"/>
+          <rect x="5" y="12" width="6" height="1" fill="#d9502a"/>
+          <rect x="7" y="5" width="2" height="1" fill="#f08a2e"/><rect x="6" y="6" width="3" height="1" fill="#f08a2e"/>
+          <rect x="5" y="7" width="5" height="1" fill="#f08a2e"/><rect x="5" y="8" width="5" height="1" fill="#f08a2e"/>
+          <rect x="5" y="9" width="6" height="1" fill="#f08a2e"/><rect x="5" y="10" width="6" height="1" fill="#f08a2e"/>
+          <rect x="6" y="11" width="4" height="1" fill="#f08a2e"/>
+          <rect x="7" y="7" width="2" height="1" fill="#ffd372"/><rect x="6" y="8" width="2" height="1" fill="#ffd372"/>
+          <rect x="7" y="9" width="2" height="1" fill="#ffd372"/><rect x="6" y="10" width="3" height="1" fill="#ffd372"/>
+          <rect x="7" y="11" width="2" height="1" fill="#ffd372"/>
+        </g>
+        <g class="f2">
+          <rect x="6" y="2" width="1" height="1" fill="#ff9b45"/><rect x="9" y="4" width="1" height="1" fill="#d9502a"/>
+          <rect x="8" y="3" width="2" height="1" fill="#d9502a"/><rect x="7" y="5" width="4" height="1" fill="#d9502a"/>
+          <rect x="5" y="6" width="6" height="1" fill="#d9502a"/><rect x="4" y="7" width="8" height="1" fill="#d9502a"/>
+          <rect x="4" y="8" width="8" height="1" fill="#d9502a"/><rect x="3" y="9" width="10" height="1" fill="#d9502a"/>
+          <rect x="3" y="10" width="10" height="1" fill="#d9502a"/><rect x="4" y="11" width="8" height="1" fill="#d9502a"/>
+          <rect x="5" y="12" width="6" height="1" fill="#d9502a"/>
+          <rect x="8" y="5" width="2" height="1" fill="#f08a2e"/><rect x="7" y="6" width="3" height="1" fill="#f08a2e"/>
+          <rect x="6" y="7" width="4" height="1" fill="#f08a2e"/><rect x="5" y="8" width="6" height="1" fill="#f08a2e"/>
+          <rect x="5" y="9" width="6" height="1" fill="#f08a2e"/><rect x="5" y="10" width="6" height="1" fill="#f08a2e"/>
+          <rect x="6" y="11" width="4" height="1" fill="#f08a2e"/>
+          <rect x="8" y="7" width="1" height="1" fill="#ffd372"/><rect x="7" y="8" width="2" height="1" fill="#ffd372"/>
+          <rect x="6" y="9" width="3" height="1" fill="#ffd372"/><rect x="7" y="10" width="2" height="1" fill="#ffd372"/>
+          <rect x="7" y="11" width="2" height="1" fill="#ffd372"/>
+        </g>
+        <rect x="3" y="13" width="10" height="1" fill="#6b4a2f"/>
+        <rect x="2" y="14" width="5" height="1" fill="#4e331c"/>
+        <rect x="9" y="14" width="5" height="1" fill="#4e331c"/>
+      </svg>
+      <i class="ember"></i><i class="ember"></i><i class="ember"></i>
+    </span>
+    <div>
+      <h1 class="pixel">FIELDBOOK</h1>
+      <p class="tag">Your offline knowledge base &amp; AI — no internet required.<br>The fire's lit. Ask anything.</p>
+    </div>
+  </div>
 
   <div class="grid">
     <a class="card" href="/chat.html">
-      <h2>💬 Ask the Librarian</h2>
+      <h2 class="pixel">💬 ASK THE LIBRARIAN</h2>
       <p>Chat with a local AI that searches your offline library and cites its sources.</p>
     </a>
     <a class="card" id="librarylink" href="#" target="_blank">
-      <h2>📚 Browse the Library</h2>
+      <h2 class="pixel">📚 BROWSE THE LIBRARY</h2>
       <p>Read Wikipedia, medical references, and survival guides directly.</p>
     </a>
     <a class="card" href="/library.html">
-      <h2>⬇️ Manage Knowledge Packs</h2>
+      <h2 class="pixel">⬇️ KNOWLEDGE PACKS</h2>
       <p>Download new content or free up space — with progress bars, no Terminal.</p>
+    </a>
+    <a class="card" href="#" onclick="return false" style="cursor:default">
+      <h2 class="pixel">🔥 STAY READY</h2>
+      <p id="readiness">Checking the camp...</p>
     </a>
   </div>
 
-  <div class="status">
+  <div class="status statusbox">
     <div class="row"><span class="light" id="l-kiwix"></span>Library server</div>
     <div class="row"><span class="light" id="l-ollama"></span>AI engine <span id="model" style="color:var(--dim)"></span></div>
     <ul class="books" id="books"></ul>
@@ -61,10 +108,13 @@ async function refresh() {
     document.getElementById('l-ollama').classList.toggle('on', s.ollama);
     document.getElementById('model').textContent = '(' + s.model + ')';
     document.getElementById('librarylink').href = 'http://' + location.hostname + ':' + s.kiwix_port;
+    document.getElementById('readiness').textContent = (s.kiwix && s.ollama && s.books.length)
+      ? 'All systems go. This Mac answers questions with zero connectivity.'
+      : 'Something needs attention — check the lights below.';
     const ul = document.getElementById('books');
     ul.innerHTML = s.books.length
       ? s.books.map(b => '<li>' + b.title + '</li>').join('')
-      : '<li>No knowledge packs yet — run <code>./fieldbook library</code> in Terminal.</li>';
+      : '<li>No knowledge packs yet — open Knowledge Packs above.</li>';
   } catch (e) { /* app starting up */ }
 }
 refresh(); setInterval(refresh, 5000);

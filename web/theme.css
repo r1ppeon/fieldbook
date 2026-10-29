@@ -1,0 +1,86 @@
+/* Fieldbook — warm low-bit theme. Everything local: no internet, ever. */
+
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('fonts/press-start-2p.woff2') format('woff2');
+  font-display: swap;
+}
+
+:root {
+  --bg: #171109;        /* night around the fire */
+  --bg-deep: #0d0a06;
+  --card: #241a10;      /* dark wood panel */
+  --card-edge: #3d2d19;
+  --text: #f3e7cf;      /* parchment */
+  --dim: #a98f6e;       /* worn leather */
+  --accent: #ff9b45;    /* ember orange */
+  --accent-hi: #ffd372; /* flame core */
+  --ok: #9fbf5f;        /* moss */
+  --bad: #e5604b;
+  --user: #2e3a24;      /* mossy green bubble */
+}
+
+body {
+  background:
+    radial-gradient(1100px 700px at 50% -8%, #2a1e10 0%, var(--bg) 55%, var(--bg-deep) 100%)
+    fixed var(--bg-deep);
+  color: var(--text);
+}
+
+.pixel {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(255, 155, 69, .35), 2px 2px 0 #000;
+}
+
+/* Chunky game-y buttons */
+button, .btnlike {
+  border-radius: 4px !important;
+  box-shadow: 0 3px 0 rgba(0,0,0,.55);
+  transition: transform .05s;
+}
+button:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.55); }
+
+/* Wood-panel cards */
+.card, .preset, .statusbox {
+  background: linear-gradient(180deg, #291e11 0%, #221709 100%) !important;
+  border: 2px solid var(--card-edge) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 0 rgba(0,0,0,.4), inset 0 1px 0 rgba(255,211,114,.07);
+}
+
+/* ---- Pixel campfire ---- */
+.campfire { display: inline-block; position: relative; }
+.campfire svg { display: block; shape-rendering: crispEdges; image-rendering: pixelated; }
+.campfire .f2 { opacity: 0; }
+.campfire .f1 { animation: flick1 .5s steps(1, end) infinite; }
+.campfire .f2 { animation: flick2 .5s steps(1, end) infinite; }
+@keyframes flick1 { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes flick2 { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+
+.campfire .glow {
+  position: absolute; left: 50%; top: 55%;
+  width: 180%; height: 150%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(255,155,69,.5), rgba(255,155,69,0) 70%);
+  animation: glowpulse 1.1s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glowpulse { 0%,100% { opacity: .75; } 50% { opacity: 1.1; } }
+
+.campfire .ember {
+  position: absolute; bottom: 42%;
+  width: 7%; height: 7%;
+  background: var(--accent-hi);
+  opacity: 0;
+  animation: rise 2.4s steps(6, end) infinite;
+}
+.campfire .ember:nth-child(2) { left: 38%; }
+.campfire .ember:nth-child(3) { left: 55%; animation-delay: .9s; background: var(--accent); }
+.campfire .ember:nth-child(4) { left: 47%; animation-delay: 1.6s; }
+@keyframes rise {
+  0%   { transform: translateY(0);     opacity: 0; }
+  10%  { opacity: .95; }
+  80%  { opacity: .4; }
+  100% { transform: translateY(-340%); opacity: 0; }
+}
