@@ -68,11 +68,20 @@ function render() {
   // Presets
   const pr = document.getElementById('presets');
   pr.innerHTML = Object.entries(state.presets).map(([key,p]) => {
-    const missing = p.packs.filter(id => { const k = state.packs.find(x=>x.id===id); return k && !k.installed; });
-    return '<div class="preset"><b>'+esc(p.label)+'</b><p>'+esc(p.desc)+'</p>' +
-      (missing.length
-        ? '<button class="dl" onclick="downloadMany('+JSON.stringify(missing).replace(/"/g,'&quot;')+')">Download '+missing.length+' pack'+(missing.length>1?'s':'')+'</button>'
-        : '<span class="done">✓ all installed</span>') + '</div>';
+    const known = p.packs.map(id => state.packs.find(x=>x.id===id)).filter(Boolean);
+    const missing = known.filter(k => !k.installed);
+    const have = known.length - missing.length;
+    const gb = missing.reduce((s,k) => s + (k.approx_gb||0), 0);
+    const busy = missing.some(k => { const j = jobFor(k.id); return j && (j.state==='downloading'||j.state==='queued'); });
+    let action;
+    if (!missing.length) action = '<span class="done">✓ all '+known.length+' packs installed</span>';
+    else if (busy) action = '<span class="size">downloading…</span>';
+    else action =
+      '<span class="size">'+have+' of '+known.length+' packs installed</span> ' +
+      '<button class="dl" onclick="downloadMany('+JSON.stringify(missing.map(k=>k.id)).replace(/"/g,'&quot;')+')">' +
+      (have ? 'Get the missing '+missing.length : 'Download all '+known.length) +
+      ' (~'+(gb<1 ? gb.toFixed(1) : Math.round(gb))+' GB)</button>';
+    return '<div class="preset"><b>'+esc(p.label)+'</b><p>'+esc(p.desc)+'</p>'+action+'</div>';
   }).join('');
 
   // Installed files

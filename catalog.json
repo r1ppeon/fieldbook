@@ -2,19 +2,19 @@
   "_comment": "Curated offline knowledge packs. 'name' + 'flavour' identify the pack in the Kiwix catalog (library.kiwix.org); exact download URL and current size are fetched live at download time. 'approx_gb' is only a guide for the menu. Packs sharing a 'group' are different sizes of the same content — you normally want just one from a group.",
   "presets": {
     "essentials": {
-      "label": "Essentials (~6 GB)",
-      "desc": "Survival + medical core, compact Wikipedia. Fits anywhere, downloads fast.",
-      "packs": ["post-disaster", "water", "food-prep", "medicine-basics", "wikimed", "wikipedia-simple", "outdoors-qa"]
+      "label": "Essentials (~7 GB)",
+      "desc": "Survival + medical core, compact Wikipedia, car fixes, cooking, knots, radio. Fits anywhere, downloads fast.",
+      "packs": ["post-disaster", "water", "food-prep", "medicine-basics", "wikimed", "wikipedia-simple", "outdoors-qa", "knots", "cooking-qa", "mechanics-qa", "ham-qa"]
     },
     "prepared": {
-      "label": "Prepared (~65 GB)",
-      "desc": "Essentials + full Wikipedia (text, no images), repair guides, travel, more medical.",
-      "packs": ["post-disaster", "water", "food-prep", "medicine-basics", "wikimed", "wikipedia-simple", "outdoors-qa", "wikipedia-nopic", "ifixit", "diy-qa", "wikivoyage", "mdwiki"]
+      "label": "Prepared (~75 GB)",
+      "desc": "Essentials + full Wikipedia (text, no images), repair guides, how-to books, gardening, travel, more medical.",
+      "packs": ["post-disaster", "water", "food-prep", "medicine-basics", "wikimed", "wikipedia-simple", "outdoors-qa", "knots", "cooking-qa", "mechanics-qa", "ham-qa", "wikipedia-nopic", "ifixit", "diy-qa", "electronics-qa", "gardening-qa", "wikibooks", "wikivoyage", "mdwiki"]
     },
     "everything": {
-      "label": "Everything (~145 GB)",
+      "label": "Everything (~155 GB)",
       "desc": "Prepared, but full Wikipedia WITH images, plus the dictionary.",
-      "packs": ["post-disaster", "water", "food-prep", "medicine-basics", "wikimed", "wikipedia-simple", "outdoors-qa", "wikipedia-full", "ifixit", "diy-qa", "wikivoyage", "mdwiki", "wiktionary"]
+      "packs": ["post-disaster", "water", "food-prep", "medicine-basics", "wikimed", "wikipedia-simple", "outdoors-qa", "knots", "cooking-qa", "mechanics-qa", "ham-qa", "wikipedia-full", "ifixit", "diy-qa", "electronics-qa", "gardening-qa", "wikibooks", "wikivoyage", "mdwiki", "wiktionary"]
     }
   },
   "packs": [
@@ -30,6 +30,18 @@
     { "id": "outdoors-qa", "name": "outdoors.stackexchange.com_en_all", "flavour": null, "category": "Survival",
       "title": "Outdoors Q&A (Stack Exchange)", "approx_gb": 0.2,
       "desc": "Thousands of real questions and answers on camping, navigation, and wilderness skills." },
+    { "id": "knots", "name": "zimgit-knots_en", "flavour": null, "category": "Survival",
+      "title": "A Library of Knots", "approx_gb": 0.03,
+      "desc": "Illustrated guides to tying the knots that matter: hitches, bends, loops, lashings." },
+    { "id": "cooking-qa", "name": "cooking.stackexchange.com_en_all", "flavour": null, "category": "Survival",
+      "title": "Cooking Q&A (Seasoned Advice)", "approx_gb": 0.2,
+      "desc": "Practical cooking answers: substitutions, food safety, preservation, technique." },
+    { "id": "gardening-qa", "name": "gardening.stackexchange.com_en_all", "flavour": null, "category": "Survival",
+      "title": "Gardening Q&A (Stack Exchange)", "approx_gb": 0.8,
+      "desc": "Growing food and keeping plants alive: soil, pests, vegetables, composting." },
+    { "id": "ham-qa", "name": "ham.stackexchange.com_en_all", "flavour": null, "category": "Survival",
+      "title": "Amateur Radio Q&A (Stack Exchange)", "approx_gb": 0.1,
+      "desc": "Off-grid communication: antennas, frequencies, emergency radio operation." },
     { "id": "medicine-basics", "name": "zimgit-medicine_en", "flavour": null, "category": "Medical",
       "title": "Emergency Medical Library", "approx_gb": 0.1,
       "desc": "Field-medicine handbooks for treating people when no doctor is available." },
@@ -56,10 +68,19 @@
       "desc": "The whole thing: every English article with images. The crown jewel." },
     { "id": "ifixit", "name": "ifixit_en_all", "flavour": null, "category": "Repair & How-To",
       "title": "iFixit Repair Guides", "approx_gb": 3.3,
-      "desc": "Step-by-step photo repair guides for electronics, appliances, and vehicles." },
+      "desc": "Step-by-step photo repair guides — deepest on phones, laptops, and game consoles. Search it (or ask the Librarian) rather than browsing; many category pages are just stubs." },
     { "id": "diy-qa", "name": "diy.stackexchange.com_en_all", "flavour": null, "category": "Repair & How-To",
       "title": "Home Improvement Q&A (Stack Exchange)", "approx_gb": 1.9,
       "desc": "Real-world answers on plumbing, electrical, structural, and general home repair." },
+    { "id": "mechanics-qa", "name": "mechanics.stackexchange.com_en_all", "flavour": null, "category": "Repair & How-To",
+      "title": "Car & Truck Repair Q&A (Stack Exchange)", "approx_gb": 0.3,
+      "desc": "Diagnosing and fixing vehicles: engines, brakes, electrical, maintenance." },
+    { "id": "electronics-qa", "name": "electronics.stackexchange.com_en_all", "flavour": null, "category": "Repair & How-To",
+      "title": "Electronics Q&A (Stack Exchange)", "approx_gb": 3.9,
+      "desc": "Circuits, components, soldering, batteries, and fixing electronic devices." },
+    { "id": "wikibooks", "name": "wikibooks_en_all", "flavour": "maxi", "category": "Repair & How-To",
+      "title": "Wikibooks (how-to books)", "approx_gb": 5.8,
+      "desc": "Open textbooks and manuals: first aid, cookbook, electronics, languages, DIY skills." },
     { "id": "wikivoyage", "name": "wikivoyage_en_all", "flavour": "maxi", "category": "Reference",
       "title": "Wikivoyage Travel Guides", "approx_gb": 1.0,
       "desc": "Travel guides for the whole world: routes, regions, practical local info." },

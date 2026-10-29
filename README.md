@@ -7,7 +7,7 @@ Fieldbook turns your Mac into a self-contained survival resource:
 
 - 📚 **Offline library** — Wikipedia, medical encyclopedias, survival guides,
   water purification, repair manuals, and more. You pick what to download, so
-  you control how much disk space it uses (from ~6 GB to 145+ GB).
+  you control how much disk space it uses (from ~7 GB to 155+ GB).
 - 🤖 **A local AI librarian** — a real language model running entirely on your
   Mac that can *search your offline library*, answer questions with cited
   sources, and help with general reasoning and problem-solving. No cloud, no
@@ -39,7 +39,7 @@ this one line, then press Return:
 ```
 
 That one command does everything: installs Fieldbook, downloads an AI sized to
-your Mac, downloads the starter survival library (~6 GB), and opens the
+your Mac, downloads the starter survival library (~7 GB), and opens the
 dashboard in your browser, ready to use. You never need Terminal again — day
 to day you just double-click **Fieldbook Start.command** in the `fieldbook`
 folder (it's in your home folder), and you add more content from the
@@ -108,7 +108,13 @@ Highlights (sizes approximate; the picker shows live sizes):
 - **WikiMed + MDWiki + Emergency Medicine** (4 GB) — every medical article on Wikipedia, physician-curated references, field medicine
 - **Wikipedia** — Simple (3 GB), Top Articles (6.5 GB), Full text (49 GB), or Full with images (119 GB)
 - **iFixit + Home Improvement Q&A** (5 GB) — fix electronics, appliances, plumbing, wiring
+- **Car & Truck Repair, Electronics, Gardening, Cooking, Amateur Radio Q&A** (5 GB) — real questions and answers from Stack Exchange communities
+- **Knots + Wikibooks** (6 GB) — illustrated knot guides, open how-to books and manuals
 - **Wikivoyage, Wiktionary, Project Gutenberg, Survivor Library** and more
+
+> **Tip on iFixit:** its step-by-step guides are excellent but unevenly spread —
+> deep on phones, laptops, and consoles, thin elsewhere — and its category pages
+> are mostly empty stubs. Don't browse it; search it, or just ask the Librarian.
 
 Content comes from the [Kiwix](https://kiwix.org) project's free library.
 
@@ -123,6 +129,11 @@ Three local services, all bound to your machine only:
 | Fieldbook app (port 8900) | The dashboard + chat. When you ask a question, the AI uses tools to search the library and read articles, then answers with source links. |
 
 ## FAQ
+
+**`zsh: permission denied: ./fieldbook`?** You're in your home folder, where
+`./fieldbook` is the *folder*, not the command. Run `cd fieldbook` first, then
+`./fieldbook start` — or skip Terminal entirely and double-click
+**Fieldbook Start.command**.
 
 **Is the AI as good as ChatGPT?** No — it's a smaller model that fits on your
 Mac. But because it searches a real reference library before answering, its

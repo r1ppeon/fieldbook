@@ -14,7 +14,7 @@ curl -fsSL https://github.com/r1ppeon/fieldbook/archive/refs/heads/main.tar.gz \
 cd "$DEST"
 ./setup.sh
 echo
-echo "🔥 Now downloading the starter knowledge library (~6 GB)..."
+echo "🔥 Now downloading the starter knowledge library (~7 GB)..."
 ./fieldbook preset essentials
 ./fieldbook start
 
